@@ -1,26 +1,21 @@
-const Discord = require('discord.js');
-const config = require('./config.json');
+function postMessageToDiscord(message) {
 
-const client = new Discord.Client();
+  message = message || "Hello World!";
 
-const embed = new Discord.RichEmbed()
-	.setTitle('Some Title')
-	.setColor('#0099ff');
+  var discordUrl = 'https://discordapp.com/api/webhooks/labnol/123';
+  var payload = JSON.stringify({content: message});
 
-client.once('ready', async () => {
-	const channel = client.channels.get('222197033908436994');
-	try {
-		const webhooks = await channel.fetchWebhooks();
-		const webhook = webhooks.first();
+  var params = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    method: "POST",
+    payload: payload,
+    muteHttpExceptions: true
+  };
 
-		await webhook.send('Webhook test', {
-			username: 'some-username',
-			avatarURL: 'https://i.imgur.com/wSTFkRM.png',
-			embeds: [embed],
-		});
-	} catch (error) {
-		console.error('Error trying to send: ', error);
-	}
-});
+  var response = UrlFetchApp.fetch(discordUrl, params);
 
-client.login(config.token);
+  Logger.log(response.getContentText());
+
+}
